@@ -1,0 +1,5 @@
+.vscode
+.direnv
+build
+result
+.cache
