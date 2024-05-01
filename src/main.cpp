@@ -171,10 +171,15 @@ int main(int argc, const char** argv)
     initdb();
   else if (args[1] == "login")
   {
+    std::cout << "Checking your ssh certification..." << std::flush;
     if (auto key = authenticated(); !key) return 1;
     else if (auto session = session_id(); !session) return 1;
-    else writedb(LoginData
-      {.Key = key->first, .SessionId = *session, .Subaccount = subaccount(), .Interactive = interactive()});
+    else
+    {
+      writedb(LoginData
+        {.Key = key->first, .SessionId = *session, .Subaccount = subaccount(), .Interactive = interactive()});
+      std::cout << fmt::format("\33[2K\rLogged in as {}.\n", key->second);
+    }
   }
   else if (args[1] == "logout")
   {
