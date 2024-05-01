@@ -18,7 +18,7 @@
     {
       packages.x86_64-linux = rec
       {
-        hpcstat = pkgs.stdenv.mkDerivation
+        hpcstat = pkgs.pkgsStatic.stdenv.mkDerivation
         {
           name = "hpcstat";
           src = ./.;

@@ -9,6 +9,7 @@
 # include <chrono>
 # include <boost/filesystem.hpp>
 # include <boost/process.hpp>
+# include <boost/dll.hpp>
 # include <fmt/format.h>
 # include <fmt/ranges.h>
 # include <zxorm/zxorm.hpp>
@@ -163,7 +164,7 @@ std::optional<std::string> subaccount()
 int main(int argc, const char** argv)
 {
   std::vector<std::string> args(argv, argv + argc);
-  Program = args[0];
+  Program = boost::dll::program_location().string();
 
   if (args.size() == 1) { std::cout << "Usage: hpcstat initdb|login|logout|submitjob|finishjob\n"; return 1; }
   else if (args[1] == "initdb")
