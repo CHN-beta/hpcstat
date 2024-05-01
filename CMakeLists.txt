@@ -3,10 +3,6 @@ project(hpcstat VERSION 0.0.0 LANGUAGES CXX)
 enable_testing()
 include(GNUInstallDirs)
 
-set_property(GLOBAL PROPERTY CXX_STANDARD 23)
-set_property(GLOBAL PROPERTY CXX_STANDARD_REQUIRED ON)
-set_property(GLOBAL PROPERTY CXX_EXTENSIONS OFF)
-
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message("Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -18,6 +14,7 @@ find_package(Boost REQUIRED COMPONENTS headers filesystem)
 find_package(zxorm REQUIRED)
 
 add_executable(hpcstat src/main.cpp)
+target_compile_features(hpcstat PUBLIC cxx_std_23)
 target_link_libraries(hpcstat PRIVATE fmt::fmt Boost::headers Boost::filesystem zxorm::zxorm)
 
 install(TARGETS hpcstat RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

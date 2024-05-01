@@ -22,7 +22,7 @@
         {
           name = "hpcstat";
           src = ./.;
-          buildInputs = with pkgs.pkgsStatic; [ boost fmt sqlitecpp ];
+          buildInputs = with pkgs.pkgsStatic; [ boost fmt localPackages.zxorm ];
           nativeBuildInputs = with pkgs; [ cmake pkg-config ];
           postInstall = "cp ${openssh}/bin/ssh-add $out/bin";
         };
