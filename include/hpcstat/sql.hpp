@@ -61,9 +61,9 @@ namespace hpcstat::sql
     unsigned Id = 0;
     long Time;
     unsigned JobId;
-    std::string JobResult, SubmitTime, Signature = "";
+    std::string JobResult, SubmitTime, JobDetail, Signature = "";
     double CpuTime;
-    using serialize = zpp::bits::members<7>;
+    using serialize = zpp::bits::members<8>;
   };
   using FinishJobTable = zxorm::Table
   <
@@ -73,6 +73,7 @@ namespace hpcstat::sql
     zxorm::Column<"job_id", &FinishJobData::JobId>,
     zxorm::Column<"job_result", &FinishJobData::JobResult>,
     zxorm::Column<"submit_time", &FinishJobData::SubmitTime>,
+    zxorm::Column<"job_detail", &FinishJobData::JobDetail>,
     zxorm::Column<"signature", &FinishJobData::Signature>,
     zxorm::Column<"cpu_time", &FinishJobData::CpuTime>
   >;

@@ -19,7 +19,7 @@ int main(int argc, const char** argv)
   }
   else if (args[1] == "login")
   {
-    std::cout << "Communicating with the agent..." << std::flush;
+    if (env::interactive()) std::cout << "Communicating with the agent..." << std::flush;
     if (auto fp = ssh::fingerprint(); !fp) return 1;
     else if (auto session = env::env("XDG_SESSION_ID", true); !session)
       return 1;
@@ -34,7 +34,7 @@ int main(int argc, const char** argv)
       if (!signature) return 1;
       data.Signature = *signature;
       sql::writedb(data);
-      std::cout << fmt::format("\33[2K\rLogged in as {}.\n", Keys[*fp].Username);
+      if (env::interactive()) std::cout << fmt::format("\33[2K\rLogged in as {}.\n", Keys[*fp].Username);
     }
   }
   else if (args[1] == "logout")
@@ -66,7 +66,7 @@ int main(int argc, const char** argv)
       data.Signature = *signature;
       sql::writedb(data);
       std::cout << fmt::format
-        ("Job {} was submitted to {} by {}.\n", bsub->first, bsub->second, Keys[*fp].Username);
+        ("Job <{}> was submitted to <{}> by <{}>.\n", bsub->first, bsub->second, Keys[*fp].Username);
     }
   }
   else if (args[1] == "finishjob")
@@ -94,7 +94,8 @@ int main(int argc, const char** argv)
         sql::FinishJobData data
         {
           .Time = now(), .JobId = jobid, .JobResult = std::get<1>(all_jobs->at(jobid)),
-          .SubmitTime = std::get<1>(all_jobs->at(jobid)), .CpuTime = std::get<2>(all_jobs->at(jobid)),
+          .SubmitTime = std::get<0>(all_jobs->at(jobid)), .JobDetail = *detail,
+          .CpuTime = std::get<2>(all_jobs->at(jobid)),
         };
         if
         (

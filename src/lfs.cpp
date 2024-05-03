@@ -16,7 +16,7 @@ namespace hpcstat::lfs
       return std::nullopt;
     else
     {
-      std::set<std::string> valid_args = { "J" "q" "n" "R" "o" };
+      std::set<std::string> valid_args = { "J", "q", "n", "R", "o" };
       for (auto it = args.begin(); it != args.end(); it++)
       {
         if (it->length() > 0 && (*it)[0] == '-')
@@ -29,11 +29,11 @@ namespace hpcstat::lfs
                 "please submit issue on [github](https://github.com/CHN-beta/hpcstat) or contact chn@chn.moe.\n";
             return std::nullopt;
           }
-          if (it + 1 != args.end() && ((it + 1)->length() == 0 || (*(it + 1))[0] != '-')) it++;
+          else if (it + 1 != args.end() && ((it + 1)->length() == 0 || (*(it + 1))[0] != '-')) it++;
         }
         else break;
       }
-      if (auto result = exec(*bsub, args); result) return std::nullopt;
+      if (auto result = exec(*bsub, args); !result) return std::nullopt;
       else
       {
         // Job <462270> is submitted to queue <normal_1day>.
