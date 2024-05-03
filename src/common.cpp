@@ -17,7 +17,7 @@ namespace hpcstat
       process = std::make_unique<bp::child>
         (program.string(), bp::args(args), bp::std_out > output, bp::std_err > stderr, bp::std_in < input);
       input << *stdin;
-      input.close();
+      input.pipe().close();
     }
     else process = std::make_unique<bp::child>
       (program.string(), bp::args(args), bp::std_out > output, bp::std_err > stderr, bp::std_in < bp::null);

@@ -34,7 +34,7 @@ int main(int argc, const char** argv)
       if (!signature) return 1;
       data.Signature = *signature;
       sql::writedb(data);
-      std::cout << fmt::format("\33[2K\rLogged in as {}.\n", *fp);
+      std::cout << fmt::format("\33[2K\rLogged in as {}.\n", Keys[*fp].Username);
     }
   }
   else if (args[1] == "logout")

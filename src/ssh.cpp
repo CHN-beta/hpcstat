@@ -47,7 +47,7 @@ namespace hpcstat::ssh
       (
         std::filesystem::path(*datadir) / "ssh-keygen",
         {
-          "-Y", "sign",
+          "-Y", "sign", "-q",
           "-f", fmt::format("{}/keys/{}", *datadir, Keys[fingerprint].PubkeyFilename),
           "-n", "hpcstat@chn.moe", "-"
         },

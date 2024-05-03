@@ -25,10 +25,11 @@
           buildInputs = with pkgs.pkgsStatic;
             [ boost fmt localPackages.zxorm nlohmann_json localPackages.zpp-bits range-v3 ];
           nativeBuildInputs = with pkgs; [ cmake pkg-config ];
-          postInstall = "cp ${openssh}/bin/ssh-add $out/bin";
+          postInstall = "cp ${openssh}/bin/{ssh-add,ssh-keygen} $out/bin";
         };
         default = hpcstat;
-        openssh = (pkgs.pkgsStatic.openssh.override { withLdns = false; }).overrideAttrs { doCheck = false; };
+        openssh = (pkgs.pkgsStatic.openssh.override { withLdns = false; etcDir = null; })
+          .overrideAttrs (prev: { doCheck = false; patches = prev.patches ++ [ ./openssh.patch ];});
       };
       devShell.x86_64-linux = pkgs.mkShell
       {
