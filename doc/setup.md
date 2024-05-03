@@ -1,4 +1,3 @@
-因为 Linux 系统机制的限制，通常情况下，只有管理员（`root`）可以读取每次登陆时使用的密钥信息，而使用 `jykang` 无法读取这些信息。
 为了区分登陆 jykang@hpc.xmu.edu.cn 时使用的密钥，并分密钥统计使用情况，需要启用一项名为“SSH agent forwarding”的功能。
 接下来的内容将带领您在 Windows 系统上配置 SSH agent forwarding。
 
