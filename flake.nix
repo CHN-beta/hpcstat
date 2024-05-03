@@ -22,7 +22,8 @@
         {
           name = "hpcstat";
           src = ./.;
-          buildInputs = with pkgs.pkgsStatic; [ boost fmt localPackages.zxorm ];
+          buildInputs = with pkgs.pkgsStatic;
+            [ boost fmt localPackages.zxorm nlohmann_json localPackages.zpp-bits range-v3 ];
           nativeBuildInputs = with pkgs; [ cmake pkg-config ];
           postInstall = "cp ${openssh}/bin/ssh-add $out/bin";
         };
@@ -32,7 +33,8 @@
       devShell.x86_64-linux = pkgs.mkShell
       {
         nativeBuildInputs = with pkgs; [ pkg-config cmake clang-tools_18 ];
-        buildInputs = (with pkgs.pkgsStatic; [ fmt boost localPackages.zxorm ]);
+        buildInputs = (with pkgs.pkgsStatic;
+          [ fmt boost localPackages.zxorm nlohmann_json localPackages.zpp-bits range-v3 ]);
         # hardeningDisable = [ "all" ];
         # NIX_DEBUG = "1";
         CMAKE_EXPORT_COMPILE_COMMANDS = "1";

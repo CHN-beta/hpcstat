@@ -12,10 +12,15 @@ endif()
 find_package(fmt REQUIRED)
 find_package(Boost REQUIRED COMPONENTS headers filesystem)
 find_package(zxorm REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_path(ZPP_BITS_INCLUDE_DIR zpp_bits.h REQUIRED)
+find_package(range-v3 REQUIRED)
 
-add_executable(hpcstat src/main.cpp)
+add_executable(hpcstat src/main.cpp src/env.cpp src/keys.cpp src/ssh.cpp src/sql.cpp src/lfs.cpp src/common.cpp)
 target_compile_features(hpcstat PUBLIC cxx_std_23)
-target_link_libraries(hpcstat PRIVATE fmt::fmt Boost::headers Boost::filesystem zxorm::zxorm)
+target_include_directories(hpcstat PRIVATE ${PROJECT_SOURCE_DIR}/include ${ZPP_BITS_INCLUDE_DIR})
+target_link_libraries(hpcstat PRIVATE fmt::fmt Boost::headers Boost::filesystem zxorm::zxorm
+  nlohmann_json::nlohmann_json range-v3::range-v3)
 
 install(TARGETS hpcstat RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
