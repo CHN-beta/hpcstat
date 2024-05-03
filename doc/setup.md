@@ -75,10 +75,18 @@ SSH 连接并不是直接由 jykang 用户处理的，
 我们只能控制 `jykang` 用户运行的进程，但这里拿不到任何关于密钥的信息。
 
 ```mermaid
-graph LR
-A[(密钥文件)] -.->|从硬盘读取| B["SSH client \n (putty, WinSCP, etc.) \n run on Windows"]
-B <--> |认证信息\n加密的数据| C["SSH server \n managed by root"] 
-C <--> |"解密后的数据\n(不包含密钥信息)"| D["Other programs \n (bash, VASP, etc.) \n <b>managed by jykang</b>"] 
+flowchart TB
+   subgraph "Run on windows"
+      A[(密钥文件)] -.->|从硬盘读取| B["SSH client (putty, WinSCP, etc.)"]
+   end
+   subgraph "Run on hpc by root"
+      C["SSH server (sshd)"]
+   end
+   B <--> |"认证信息 & 加密的数据"| C
+   subgraph "Run on hpc by <b>jykang</b>"
+      D["Other programs (bash, VASP, etc.)"] 
+   end
+   C <--> |"解密后的数据(不包含密钥信息)"| D
 ```
 
 Pageant 程序就是所谓的“SSH agent”。“SSH agent forwarding” 就是将到 Pageant 的连接通过已经建立的 SSH 连接转发给远程服务器，
@@ -86,12 +94,20 @@ Pageant 程序就是所谓的“SSH agent”。“SSH agent forwarding” 就是
 “SSH agent forwarding” 典型的用途是在远程服务器上使用本地的密钥再次登陆其他服务器，而不是为了区分使用不同密钥的登陆。
 
 ```mermaid
-graph LR
-A[(密钥文件)] -.->|从硬盘读取| E["SSH agent \n (pageant) \n run on Windows"]
-E <-->|认证信息| B["SSH client \n (putty, WinSCP, etc.) \n run on Windows"]
-B <--> |认证信息\n加密的数据| C["SSH server \n managed by root"] 
-C <--> |"解密后的数据\n(不包含密钥信息)"| D["Other programs \n (bash, VASP, etc.) \n <b>managed by jykang</b>"] 
-E <-...-> |"通过已经建立的 SSH 连接转发\n密钥信息"| D
+flowchart TB
+   subgraph "Run on windows"
+      A[(密钥文件)] -.->|从硬盘读取| E["SSH agent (pageant)"]
+      E <-->|认证信息| B["SSH client (putty, WinSCP, etc.)"]
+   end
+   subgraph "Run on hpc by root"
+      C["SSH server (sshd)"]
+   end
+   B <--> |"认证信息 & 加密的数据"| C
+   subgraph "Run on hpc by <b>jykang</b>"
+      D["Other programs (bash, VASP, etc.)"] 
+   end
+   C <--> |"解密后的数据(不包含密钥信息)"| D
+   E <-...-> |"通过已经建立的 SSH 连接转发密钥信息"| D
 ```
 
 另外，如果您希望进一步区分使用同一个密钥的不同用户，可以修改 `TERM` 变量，加上 `hpcstat_subaccount:your_name:` 前缀。
