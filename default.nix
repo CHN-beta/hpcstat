@@ -13,6 +13,6 @@
     else
     ''
       wrapProgram $out/bin/hpcstat --set HPCSTAT_SHAREDIR $out/share/hpcstat \
-        --set HPCSTAT_DATADIR /var/lib/hpcstat
+        --set HPCSTAT_DATADIR /var/lib/hpcstat --set HPCSTAT_SSH_BINDIR ${openssh}/bin
     '';
 }

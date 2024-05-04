@@ -14,12 +14,12 @@ namespace hpcstat::ssh
 {
   std::optional<std::string> fingerprint()
   {
-    if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
+    if (auto sshbindir = env::env("HPCSTAT_SSH_BINDIR"); !sshbindir)
       return std::nullopt;
     else if
     (
       auto output =
-        exec(std::filesystem::path(*sharedir) / "ssh-add", { "-l" });
+        exec(std::filesystem::path(*sshbindir) / "ssh-add", { "-l" });
       !output
     )
       { std::cerr << "Failed to get ssh fingerprints\n"; return std::nullopt; }
@@ -39,13 +39,15 @@ namespace hpcstat::ssh
   }
   std::optional<std::string> sign(std::string message, std::string fingerprint)
   {
-    if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
+    if (auto sshbindir = env::env("HPCSTAT_SSH_BINDIR"); !sshbindir)
+      return std::nullopt;
+    else if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
       return std::nullopt;
     else if
     (
       auto output = exec
       (
-        std::filesystem::path(*sharedir) / "ssh-keygen",
+        std::filesystem::path(*sshbindir) / "ssh-keygen",
         {
           "-Y", "sign", "-q",
           "-f", fmt::format("{}/keys/{}", *sharedir, Keys[fingerprint].PubkeyFilename),
@@ -60,7 +62,9 @@ namespace hpcstat::ssh
   }
   bool verify(std::string message, std::string signature, std::string fingerprint)
   {
-    if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
+    if (auto sshbindir = env::env("HPCSTAT_SSH_BINDIR"); !sshbindir)
+      return false;
+    else if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
       return false;
     else
     {
@@ -71,7 +75,7 @@ namespace hpcstat::ssh
       std::ofstream(signaturefile) << signature;
       return exec
       (
-        std::filesystem::path(*sharedir) / "ssh-keygen",
+        std::filesystem::path(*sshbindir) / "ssh-keygen",
         {
           "-Y", "verify",
           "-f", fmt::format("{}/keys/{}", *sharedir, Keys[fingerprint].PubkeyFilename),
