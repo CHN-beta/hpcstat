@@ -1,3 +1,4 @@
+# include <thread>
 # include <hpcstat/sql.hpp>
 # include <hpcstat/ssh.hpp>
 # include <hpcstat/env.hpp>
@@ -10,6 +11,7 @@
 int main(int argc, const char** argv)
 {
   using namespace hpcstat;
+  using namespace std::literals;
   std::vector<std::string> args(argv, argv + argc);
 
   if (args.size() == 1) { std::cout << "Usage: hpcstat initdb|login|logout|submitjob|finishjob\n"; return 1; }
@@ -20,6 +22,7 @@ int main(int argc, const char** argv)
   else if (args[1] == "login")
   {
     if (env::interactive()) std::cout << "Communicating with the agent..." << std::flush;
+    std::this_thread::sleep_for(1s);  // might silly but it tells everyone that we are doing something
     if (auto fp = ssh::fingerprint(); !fp) return 1;
     else if (auto session = env::env("XDG_SESSION_ID", true); !session)
       return 1;
@@ -34,7 +37,8 @@ int main(int argc, const char** argv)
       if (!signature) return 1;
       data.Signature = *signature;
       sql::writedb(data);
-      if (env::interactive()) std::cout << fmt::format("\33[2K\rLogged in as {}.\n", Keys[*fp].Username);
+      if (env::interactive())
+        std::cout << fmt::format("\33[2K\rLogged in as {} (fingerprint: SHA256:{}).\n", Keys[*fp].Username, *fp);
     }
   }
   else if (args[1] == "logout")
@@ -94,7 +98,7 @@ int main(int argc, const char** argv)
         sql::FinishJobData data
         {
           .Time = now(), .JobId = jobid, .JobResult = std::get<1>(all_jobs->at(jobid)),
-          .SubmitTime = std::get<0>(all_jobs->at(jobid)), .JobDetail = *detail,
+          .SubmitTime = std::get<0>(all_jobs->at(jobid)), .JobDetail = *detail, .Key = *fp,
           .CpuTime = std::get<2>(all_jobs->at(jobid)),
         };
         if
@@ -107,7 +111,14 @@ int main(int argc, const char** argv)
       }
     }
   }
+  else if (args[1] == "verify")
+  {
+    if (args.size() < 4) { std::cerr << "Usage: hpcstat verify <old.db> <new.db>\n"; return 1; }
+    if (auto db_verify_result = sql::verify(args[2], args[3]); !db_verify_result) return 1;
+    else for (auto& data : *db_verify_result)
+      if (!std::apply(ssh::verify, data))
+        { std::cerr << fmt::format("Failed to verify data: {}\n", std::get<0>(data)); return 1; }
+  }
   else { std::cerr << "Unknown command.\n"; return 1; }
-
   return 0;
 }

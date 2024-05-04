@@ -30,7 +30,7 @@ namespace hpcstat::ssh
       for
       (
         auto i = std::sregex_iterator(output->begin(), output->end(), pattern);
-        i != std::sregex_iterator(); i++
+        i != std::sregex_iterator(); ++i
       )
         if (Keys.contains(i->str(1))) return i->str(1);
       std::cerr << fmt::format("No valid fingerprint found in:\n{}\n", *output);

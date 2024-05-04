@@ -12,6 +12,7 @@ namespace hpcstat::sql
     std::optional<std::string> Subaccount, Ip;
     bool Interactive;
     using serialize = zpp::bits::members<8>;
+    bool operator==(const LoginData& other) const = default;
   };
   using LoginTable = zxorm::Table
   <
@@ -25,7 +26,13 @@ namespace hpcstat::sql
     zxorm::Column<"ip", &LoginData::Ip>,
     zxorm::Column<"interactive", &LoginData::Interactive>
   >;
-  struct LogoutData { unsigned Id = 0; long Time; std::string SessionId; };
+  struct LogoutData
+  {
+    unsigned Id = 0;
+    long Time;
+    std::string SessionId;
+    bool operator==(const LogoutData& other) const = default;
+  };
   using LogoutTable = zxorm::Table
   <
     "logout", LogoutData,
@@ -41,6 +48,7 @@ namespace hpcstat::sql
     std::string Key, SessionId, SubmitDir, JobCommand, Signature = "";
     std::optional<std::string> Subaccount, Ip;
     using serialize = zpp::bits::members<10>;
+    bool operator==(const SubmitJobData& other) const = default;
   };
   using SubmitJobTable = zxorm::Table
   <
@@ -61,9 +69,10 @@ namespace hpcstat::sql
     unsigned Id = 0;
     long Time;
     unsigned JobId;
-    std::string JobResult, SubmitTime, JobDetail, Signature = "";
+    std::string JobResult, SubmitTime, JobDetail, Key, Signature = "";
     double CpuTime;
-    using serialize = zpp::bits::members<8>;
+    using serialize = zpp::bits::members<9>;
+    bool operator==(const FinishJobData& other) const = default;
   };
   using FinishJobTable = zxorm::Table
   <
@@ -74,6 +83,7 @@ namespace hpcstat::sql
     zxorm::Column<"job_result", &FinishJobData::JobResult>,
     zxorm::Column<"submit_time", &FinishJobData::SubmitTime>,
     zxorm::Column<"job_detail", &FinishJobData::JobDetail>,
+    zxorm::Column<"key", &FinishJobData::Key>,
     zxorm::Column<"signature", &FinishJobData::Signature>,
     zxorm::Column<"cpu_time", &FinishJobData::CpuTime>
   >;
@@ -85,4 +95,8 @@ namespace hpcstat::sql
   bool writedb(auto value);
   // 查询 bjobs -a 的结果中，有哪些是已经被写入到数据库中的（按照任务 id 和提交时间计算），返回未被写入的任务 id
   std::optional<std::set<unsigned>> finishjob_remove_existed(std::map<unsigned, std::string> jobid_submit_time);
+  // 检查数据库中已经有的数据是否被修改过，如果有修改过，返回 std::nullopt，否则返回新增的数据，用于校验签名
+  // 三个字符串分别是序列化后的数据，签名，指纹
+  std::optional<std::vector<std::tuple<std::string, std::string, std::string>>>
+    verify(std::string old_db, std::string new_db);
 }

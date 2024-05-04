@@ -15,6 +15,7 @@ find_package(zxorm REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_path(ZPP_BITS_INCLUDE_DIR zpp_bits.h REQUIRED)
 find_package(range-v3 REQUIRED)
+find_path(NAMEOF_INCLUDE_DIR nameof.hpp REQUIRED)
 
 add_executable(hpcstat src/main.cpp src/env.cpp src/keys.cpp src/ssh.cpp src/sql.cpp src/lfs.cpp src/common.cpp)
 target_compile_features(hpcstat PUBLIC cxx_std_23)
