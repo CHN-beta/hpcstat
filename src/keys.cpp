@@ -4,7 +4,7 @@ namespace hpcstat
 {
   std::map<std::string, Key> Keys
   {
-    { "6ysFAicySxOCT8RN9E5QvIYSrbydJr5fDlxoJGZDND0", { "chn", "Haonan Chen" } },
+    { "LNoYfq/SM7l8sFAy325WpC+li+kZl3jwST7TmP72Tz8", { "chn", "Haonan Chen" } },
     { "VJT5wgkb2RcIeVNTA+/NKxokctbYnJ/KgH6IxrKqIGE", { "gb", "Bin Gong" } },
     { "umC3/RB1vS8TQBHsY3IzhOiyqVrOSw2fB3rIpDQSmf4", { "xll", "Leilei Xiang" } },
     { "fdq5k13N2DAzIK/2a1Mm4/ZVsDUgT623TSOXsVswxT8", { "yjq", "Junqi Yao" } },
