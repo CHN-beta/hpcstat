@@ -23,14 +23,14 @@ namespace hpcstat::sql
     (std::optional<std::string> dbfile = std::nullopt)
   {
     if (dbfile) return std::make_optional<zxorm::Connection<LoginTable, LogoutTable, SubmitJobTable, FinishJobTable>>
-      (dbfile->c_str());
+      (dbfile->c_str(), SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX);
     else if (auto datadir = env::env("HPCSTAT_DATADIR", true); !datadir)
       return std::nullopt;
     else
     {
       auto dbfile = std::filesystem::path(*datadir) / "hpcstat.db";
       return std::make_optional<zxorm::Connection<LoginTable, LogoutTable, SubmitJobTable, FinishJobTable>>
-        (dbfile.c_str());
+        (dbfile.c_str(), SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX);
     }
   }
   bool initdb()
