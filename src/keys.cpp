@@ -12,6 +12,7 @@ namespace hpcstat
     { "7bmG24muNsaAZkCy7mQ9Nf2HuNafmvUO+Hf1bId9zts", { "00", "Yaping Wu" } },
     { "dtx0QxdgFrXn2SYxtIRz43jIAH6rLgJidSdTvuTuews", { "01", "Jing Li" } },
     { "8crUO9u4JiVqw3COyjXfzZe87s6XZFhvi0LaY0Mv6bg", { "02", "Huahan Zhan" } },
-    { "QkmIYw7rmDEAP+LDWxm6L2/XLnAqTwRUB7B0pxYlOUs", { "03", "Na Gao" } }
+    { "QkmIYw7rmDEAP+LDWxm6L2/XLnAqTwRUB7B0pxYlOUs", { "03", "Na Gao" } },
+    { "6NmbGMvtcNlsmN61ZtiV1cg0aOGeM8sCa4rk2brsS4k", { "hpcstat", "hpcstat" } }
   };
 }
