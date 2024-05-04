@@ -14,30 +14,20 @@
             { pkgs = final; inherit (inputs.nixpkgs) lib; topInputs = inputs.nixos.inputs; };
         })];
       });
-    in
+    in rec
     {
       packages.x86_64-linux = rec
       {
-        hpcstat = pkgs.pkgsStatic.stdenv.mkDerivation
-        {
-          name = "hpcstat";
-          src = ./.;
-          buildInputs = with pkgs.pkgsStatic;
-            [ boost fmt localPackages.zxorm nlohmann_json localPackages.zpp-bits range-v3 localPackages.nameof ];
-          nativeBuildInputs = with pkgs; [ cmake pkg-config ];
-          postInstall = "cp ${openssh}/bin/{ssh-add,ssh-keygen} $out/bin";
-        };
+        hpcstat = pkgs.pkgsStatic.callPackage ./.
+          { inherit (pkgs.pkgsStatic.localPackages) zxorm zpp-bits nameof; inherit openssh; standalone = true; };
         default = hpcstat;
         openssh = (pkgs.pkgsStatic.openssh.override { withLdns = false; etcDir = null; })
           .overrideAttrs (prev: { doCheck = false; patches = prev.patches ++ [ ./openssh.patch ];});
       };
       devShell.x86_64-linux = pkgs.mkShell
       {
-        nativeBuildInputs = with pkgs; [ pkg-config cmake clang-tools_18 ];
-        buildInputs = (with pkgs.pkgsStatic;
-          [ fmt boost localPackages.zxorm nlohmann_json localPackages.zpp-bits range-v3 localPackages.nameof ]);
-        # hardeningDisable = [ "all" ];
-        # NIX_DEBUG = "1";
+        inputsFrom = [ packages.x86_64-linux.hpcstat ];
+        nativeBuildInputs = with pkgs; [ clang-tools_18 ];
         CMAKE_EXPORT_COMPILE_COMMANDS = "1";
       };
     };

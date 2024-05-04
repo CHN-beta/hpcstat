@@ -15,5 +15,4 @@ namespace hpcstat::env
     }
     else return value;
   }
-  // XDG_SESSION_ID HPCSTAT_SUBACCOUNT SSH_CONNECTION
 }

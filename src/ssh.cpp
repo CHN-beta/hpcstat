@@ -14,12 +14,12 @@ namespace hpcstat::ssh
 {
   std::optional<std::string> fingerprint()
   {
-    if (auto datadir = env::env("HPCSTAT_DATADIR", true); !datadir)
+    if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
       return std::nullopt;
     else if
     (
       auto output =
-        exec(std::filesystem::path(*datadir) / "ssh-add", { "-l" });
+        exec(std::filesystem::path(*sharedir) / "ssh-add", { "-l" });
       !output
     )
       { std::cerr << "Failed to get ssh fingerprints\n"; return std::nullopt; }
@@ -39,16 +39,16 @@ namespace hpcstat::ssh
   }
   std::optional<std::string> sign(std::string message, std::string fingerprint)
   {
-    if (auto datadir = env::env("HPCSTAT_DATADIR", true); !datadir)
+    if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
       return std::nullopt;
     else if
     (
       auto output = exec
       (
-        std::filesystem::path(*datadir) / "ssh-keygen",
+        std::filesystem::path(*sharedir) / "ssh-keygen",
         {
           "-Y", "sign", "-q",
-          "-f", fmt::format("{}/keys/{}", *datadir, Keys[fingerprint].PubkeyFilename),
+          "-f", fmt::format("{}/keys/{}", *sharedir, Keys[fingerprint].PubkeyFilename),
           "-n", "hpcstat@chn.moe", "-"
         },
         message
@@ -60,7 +60,7 @@ namespace hpcstat::ssh
   }
   bool verify(std::string message, std::string signature, std::string fingerprint)
   {
-    if (auto datadir = env::env("HPCSTAT_DATADIR", true); !datadir)
+    if (auto sharedir = env::env("HPCSTAT_SHAREDIR", true); !sharedir)
       return false;
     else
     {
@@ -71,10 +71,10 @@ namespace hpcstat::ssh
       std::ofstream(signaturefile) << signature;
       return exec
       (
-        std::filesystem::path(*datadir) / "ssh-keygen",
+        std::filesystem::path(*sharedir) / "ssh-keygen",
         {
           "-Y", "verify",
-          "-f", fmt::format("{}/keys/{}", *datadir, Keys[fingerprint].PubkeyFilename),
+          "-f", fmt::format("{}/keys/{}", *sharedir, Keys[fingerprint].PubkeyFilename),
           "-n", "hpcstat@chn.moe", "-s", signaturefile.string()
         },
         message

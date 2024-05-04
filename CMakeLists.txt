@@ -24,6 +24,7 @@ target_link_libraries(hpcstat PRIVATE fmt::fmt Boost::headers Boost::filesystem 
   nlohmann_json::nlohmann_json range-v3::range-v3)
 
 install(TARGETS hpcstat RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(DIRECTORY share/ DESTINATION ${CMAKE_INSTALL_DATADIR}/hpcstat)
 
 get_property(ImportedTargets DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY IMPORTED_TARGETS)
 message("Imported targets: ${ImportedTargets}")
