@@ -50,7 +50,7 @@ namespace hpcstat::sql
       auto not_logged_job = all_job | ranges::to<std::set<unsigned>>;
       for (auto it : conn->select_query<FinishJobData>()
         .order_by<FinishJobTable::field_t<"id">>(zxorm::order_t::DESC)
-        .where_many(FinishJobTable::field_t<"id">().in(all_job))
+        .where_many(FinishJobTable::field_t<"job_id">().in(all_job))
         .exec())
         if (jobid_submit_time[it.JobId] == it.SubmitTime)
           not_logged_job.erase(it.JobId);
