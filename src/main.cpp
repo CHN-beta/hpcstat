@@ -7,6 +7,7 @@
 # include <hpcstat/lfs.hpp>
 # include <fmt/format.h>
 # include <range/v3/view.hpp>
+# include <boost/exception/diagnostic_information.hpp>
 
 int main(int argc, const char** argv)
 {
@@ -123,7 +124,6 @@ int main(int argc, const char** argv)
     }
     else { std::cerr << "Unknown command.\n"; return 1; }
   }
-  catch (const std::exception& e) { std::cerr << fmt::format("Exception: {}\n", e.what()); return 1; }
-  catch (...) { std::cerr << "Unknown exception.\n"; return 1; }
+  catch (...) { std::cerr << boost::current_exception_diagnostic_information() << std::endl; return 1; }
   return 0;
 }
