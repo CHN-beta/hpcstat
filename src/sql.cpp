@@ -74,7 +74,7 @@ namespace hpcstat::sql
           if (*old_data_it != *new_data_it)
           {
             std::cerr << fmt::format
-              ("Data mismatch: {} {} != {}.\n", nameof::nameof_type<T>(), (*old_data_it).Id, (*new_data_it).Id);
+              ("Data mismatch: {} {} != {}.\n", nameof::nameof_type<T>(), old_data_it->Id, new_data_it->Id);
             return std::nullopt;
           }
         if (old_data_it != old_query.end() && new_data_it == new_query.end())
@@ -90,7 +90,7 @@ namespace hpcstat::sql
             auto data = *old_data_it;
             data.Signature = "";
             data.Id = 0;
-            diff.push_back({ serialize(data), (*old_data_it).Signature, (*old_data_it).Key });
+            diff.push_back({ serialize(data), old_data_it->Signature, old_data_it->Key });
           }
           return diff;
         }
